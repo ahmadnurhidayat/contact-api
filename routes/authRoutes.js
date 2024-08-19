@@ -1,4 +1,5 @@
 const express = require('express');
+
 const {
   registerUser,
   loginUser,
@@ -21,6 +22,5 @@ router.get('/users/:id', protect, getSpecificUser);
 router.put('/users', protect, updateUserProfile);
 router.post('/logout', protect, logoutUser);
 router.delete('/users/:id', protect, deleteUser);
-
 
 module.exports = router;
