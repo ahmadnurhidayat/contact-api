@@ -11,6 +11,18 @@ connectDb();
 const app = express();
 app.use(express.json());
 
+// Landing page
+app.get("/", (req, res) => {
+  res.send(
+    <html>
+      <body>
+        <h1>Welcome to the Contact API</h1>
+        <p>Please use /api/auth to get started</p>
+      </body>
+    </html>
+  );
+});
+
 app.use('/api', authRoutes);
 app.use(errorHandler);
 
