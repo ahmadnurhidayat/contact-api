@@ -5,10 +5,18 @@ const jwt = require("jsonwebtoken");
 const asyncHandler = require("express-async-handler");
 const User = require("../models/userModel");
 
+// Helper function for consistent response structure
+const sendResponse = (res, status, message, data = []) => {
+  res.status(status).json({
+    status: status,
+    message: message,
+    data: data,
+  });
+};
+
 // Generate JWT
-// eslint-disable-next-line consistent-return
 const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "30d" });
+  return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "1d" });
 };
 
 // @desc Register new user
@@ -17,27 +25,24 @@ const generateToken = (id) => {
 const registerUser = asyncHandler(async (req, res) => {
   const { name, email, password } = req.body;
   if (!name || !email || !password) {
-    res.status(400);
-    throw new Error("Please add all fields");
+    return sendResponse(res, 400, "Please add all fields");
   }
 
   const userExists = await User.findOne({ email });
   if (userExists) {
-    res.status(400);
-    throw new Error("User already exists");
+    return sendResponse(res, 400, "User already exists");
   }
 
   const user = await User.create({ name, email, password });
   if (user) {
-    res.status(201).json({
+    sendResponse(res, 201, "User registered successfully", {
       _id: user._id,
       name: user.name,
       email: user.email,
       token: generateToken(user._id),
     });
   } else {
-    res.status(400);
-    throw new Error("Invalid user data");
+    sendResponse(res, 400, "Invalid user data");
   }
 });
 
@@ -48,15 +53,14 @@ const loginUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
   const user = await User.findOne({ email });
   if (user && (await user.matchPassword(password))) {
-    res.json({
+    sendResponse(res, 200, "Login successful", {
       _id: user._id,
       name: user.name,
       email: user.email,
       token: generateToken(user._id),
     });
   } else {
-    res.status(401);
-    throw new Error("Invalid email or password");
+    sendResponse(res, 401, "Invalid email or password");
   }
 });
 
@@ -65,12 +69,11 @@ const loginUser = asyncHandler(async (req, res) => {
 // @access Private
 const getAllUser = asyncHandler(async (req, res) => {
   if (!req.user) {
-    res.status(401);
-    throw new Error("Not authorized, no user found");
+    return sendResponse(res, 401, "Not authorized, no user found");
   }
 
   const users = await User.find();
-  res.status(200).json(users);
+  sendResponse(res, 200, "Users retrieved successfully", users);
 });
 
 // @desc Get User by ID
@@ -79,19 +82,16 @@ const getAllUser = asyncHandler(async (req, res) => {
 const getSpecificUser = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
-  // Check if ID is a valid ObjectId
   if (!mongoose.Types.ObjectId.isValid(id)) {
-    res.status(400);
-    throw new Error('Invalid ID format');
+    return sendResponse(res, 400, "Invalid ID format");
   }
 
   const user = await User.findById(id);
-  if (!user) {
-    res.status(404);
-    throw new Error('User not found');
+  if (user) {
+    sendResponse(res, 200, "User retrieved successfully", user);
+  } else {
+    sendResponse(res, 404, "User not found");
   }
-
-  res.status(200).json(user);
 });
 
 // @desc Update user profile
@@ -106,15 +106,14 @@ const updateUserProfile = asyncHandler(async (req, res) => {
       user.password = req.body.password;
     }
     const updatedUser = await user.save();
-    res.json({
+    sendResponse(res, 200, "User profile updated", {
       _id: updatedUser._id,
       name: updatedUser.name,
       email: updatedUser.email,
       token: generateToken(updatedUser._id),
     });
   } else {
-    res.status(404);
-    throw new Error("User not found");
+    sendResponse(res, 404, "User not found");
   }
 });
 
@@ -122,11 +121,7 @@ const updateUserProfile = asyncHandler(async (req, res) => {
 // @route POST /api/logout
 // @access Private
 const logoutUser = asyncHandler(async (req, res) => {
-  // res.clearCookie('token');
-  // res.json({ message: 'Logged out successfully' });
-  res.status(200).json({
-    message: "Logged out successfully",
-  });
+  sendResponse(res, 200, "Logged out successfully");
 });
 
 // @desc Delete user
@@ -136,10 +131,9 @@ const deleteUser = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user._id);
   if (user) {
     await user.remove();
-    res.json({ message: "User removed" });
+    sendResponse(res, 200, "User removed");
   } else {
-    res.status(404);
-    throw new Error("User not found");
+    sendResponse(res, 404, "User not found");
   }
 });
 

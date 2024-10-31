@@ -52,11 +52,8 @@ app.get("/", (req, res) => {
   `);
 });
 
-
-
 app.use('/api', authRoutes);
 app.use(errorHandler);
-
 
 // Start the server
 const PORT = process.env.PORT || 4000;
