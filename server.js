@@ -1,9 +1,10 @@
-const dotenv = require("dotenv");
-const express = require("express");
+import dotenv from "dotenv";
+import express from "express";
 
-const authRoutes = require("./routes/authRoutes");
-const errorHandler = require("./middleware/errorHandler");
-const connectDb = require("./config/dbConnection");
+import authRoutes from "./routes/authRoutes.js";
+import productRoutes from "./routes/productRoutes.js";
+import errorHandler from "./middleware/errorHandler.js";
+import connectDb from "./config/dbConnection.js";
 
 dotenv.config();
 connectDb();
@@ -52,7 +53,9 @@ app.get("/", (req, res) => {
   `);
 });
 
-app.use('/api', authRoutes);
+// Routes
+app.use("/api/auth", authRoutes);
+app.use("/api/products", productRoutes);
 app.use(errorHandler);
 
 // Start the server

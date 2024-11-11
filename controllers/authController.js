@@ -1,16 +1,17 @@
-const dotenv = require("dotenv");
+import dotenv from "dotenv";
+import mongoose from "mongoose";
+import jwt from "jsonwebtoken";
+import asyncHandler from "express-async-handler";
+import User from "../models/userModel.js";
+
 dotenv.config();
-const mongoose = require("mongoose");
-const jwt = require("jsonwebtoken");
-const asyncHandler = require("express-async-handler");
-const User = require("../models/userModel");
 
 // Helper function for consistent response structure
 const sendResponse = (res, status, message, data = []) => {
   res.status(status).json({
-    status: status,
-    message: message,
-    data: data,
+    status,
+    message,
+    data,
   });
 };
 
@@ -30,7 +31,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
   const userExists = await User.findOne({ email });
   if (userExists) {
-    return sendResponse(res, 400, "User already exists");
+    return sendResponse(res, 400, "User already exists, Email already registered");
   }
 
   const user = await User.create({ name, email, password });
@@ -137,7 +138,7 @@ const deleteUser = asyncHandler(async (req, res) => {
   }
 });
 
-module.exports = {
+export {
   registerUser,
   loginUser,
   getAllUser,
