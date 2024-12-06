@@ -18,36 +18,10 @@ app.get("/", (req, res) => {
     <html>
       <head>
         <title>Contact API</title>
-        <style>
-          html, body {
-            height: 100%;
-            margin: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-          }
-          .container {
-            text-align: center;
-            padding: 20px;
-            border-radius: 8px;
-            background-color: #fff;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-          }
-          h1 {
-            color: #333;
-          }
-          p {
-            color: #555;
-          }
-        </style>
       </head>
       <body>
-        <div class="container">
-          <h1>Welcome to the Contact API</h1>
-          <p>Please use /api/auth to get started</p>
-        </div>
+        <pre>{"message":"It works"}</pre>
+        <div class="json-formatter-container"></div>
       </body>
     </html>
   `);

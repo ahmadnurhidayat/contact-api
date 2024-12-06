@@ -11,7 +11,7 @@ WORKDIR /app
 COPY package.json .
 
 # Install only production dependencies
-RUN npm install
+RUN pnpm install
 
 # Copy the rest of the application code
 COPY . .
@@ -20,4 +20,4 @@ COPY . .
 EXPOSE 4000
 
 # Set the default command to run the app
-CMD ["npm", "start"]
+CMD ["pnpm", "start"]
