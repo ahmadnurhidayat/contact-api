@@ -11,6 +11,7 @@ connectDb();
 
 const app = express();
 app.use(express.json());
+app.use(express.static("public"));
 
 // Landing page
 app.get("/", (req, res) => {
