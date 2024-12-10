@@ -14,17 +14,7 @@ app.use(express.json());
 
 // Landing page
 app.get("/", (req, res) => {
-  res.send(`
-    <html>
-      <head>
-        <title>Contact API</title>
-      </head>
-      <body>
-        <pre>{"message":"It works"}</pre>
-        <div class="json-formatter-container"></div>
-      </body>
-    </html>
-  `);
+  res.send("It works!");
 });
 
 // Routes
